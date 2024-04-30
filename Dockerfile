@@ -8,35 +8,40 @@ WORKDIR $HOME
 
 ######### Customize Container Here ###########
 
-# Install OpenVPN
+# Install OpenVPN, dirsearch ...
 RUN apt-get update && \
-    apt-get install -y openvpn dirsearch unzip iputils-ping
+    apt-get install -y openvpn dirsearch unzip iputils-ping zsh
+
+# Make zsh the default shell
+RUN chsh -s $(which zsh)
 
 # Install Starship
 RUN wget https://starship.rs/install.sh
 RUN chmod +x install.sh
 RUN ./install.sh -y
 
-# Add Starship to bashrc
-RUN echo 'eval "$(starship init bash)"' >> .bashrc
+# Add Starship to zshrc
+RUN echo 'eval "$(starship init zsh)"' >> .zshrc
 
 # Add Starship Theme
 COPY config/starship.toml .config/starship.toml
 
-# Install Starship
-RUN wget https://starship.rs/install.sh
-RUN chmod +x install.sh
-RUN ./install.sh -y
-
-# Add Starship to bashrc
-RUN echo 'eval "$(starship init bash)"' >> .bashrc
-
-# Add Starship Theme
-COPY config/starship.toml .config/starship.toml
 
 # Install Hack Nerd Font
 RUN wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/Hack.zip
 RUN unzip Hack.zip -d /usr/local/share/fonts
+
+# Install ZSH Auto Suggestions
+RUN git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
+# Add the invoke script to ZSH config
+RUN echo "source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" >> .zshrc
+
+# Install ZSH Syntax Highlighting
+RUN git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.zsh/zsh-syntax-highlighting
+# Add the invoke script to ZSH config
+RUN echo "source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> .zshrc
+
+
 
 
 ######### End Customizations ###########
